@@ -1,20 +1,36 @@
 
-import { TokenizerGenerator, TokenDefenition } from './TokenizerGenerator';
 
-const defenitions = [
+import { Tokenizer } from "./Tokenizer"
+
+const definitions = [
     {
         name: 'NUMBER',
-        value: null,
-        regex: '[0-9]+'
-
+        regex: /[0-9]+/
     },
     {
-        name: 'LOGIC_VALUES',
-        value: ['true', 'false'],
-        regex: null
+        name: 'TRUE',
+        regex: 'true'
+    },
+    {
+        name: 'FALSE',
+        regex: 'false'
+    },
+    {
+        name: 'DIVIDERS',
+        regex: /\s+|\t+|\n+/,
+        skip: true
     }
 ]
 
-const tGenerator = new TokenizerGenerator(defenitions as TokenDefenition[])
+const file = 'false 41 true\n512 false'
 
-tGenerator.showTokenTypes()
+const tokenizer = new Tokenizer(file, definitions)
+
+try {
+    console.log(tokenizer.generateTable())
+} catch (error) {
+    console.error(error)
+}
+finally{
+    console.log(`input file:\n------------------------\n ${file}\n------------------------`)
+}
