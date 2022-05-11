@@ -1,36 +1,48 @@
 
 
-import { Tokenizer } from "./Tokenizer"
+import { ParserGenerator } from "./Parser"
 
 const definitions = [
-    {
-        name: 'NUMBER',
-        regex: /[0-9]+/
-    },
-    {
-        name: 'TRUE',
-        regex: 'true'
-    },
-    {
-        name: 'FALSE',
-        regex: 'false'
-    },
-    {
-        name: 'DIVIDERS',
-        regex: /\s+|\t+|\n+/,
-        skip: true
-    }
+  {
+    name: 'id',
+    regex: /[a-zA-Z]+/
+  },
+  {
+    name: 'PLUS',
+    regex: /\+/
+  },
+  {
+    name: 'MULT',
+    regex: /\*/
+  },
+  {
+    name: '_',
+    regex: /\s+|\t+|\n+/,
+    skip: true
+  }
 ]
 
-const file = 'false 41 true\n512 false'
+const rules = [
+  {
+    name : 'E',
+    rules: ['E PLUS T', 'T']
+  },
+  {
+    name: 'T',
+    rules: ['T MULT F', 'F']
+  },
+  {
+    name: 'F',
+    rules: ['id']
+  }
+]
 
-const tokenizer = new Tokenizer(file, definitions)
+const grammar = {
+  tokens: definitions,
+  rules: rules
+}
 
-try {
-    console.log(tokenizer.generateTable())
-} catch (error) {
-    console.error(error)
-}
-finally{
-    console.log(`input file:\n------------------------\n ${file}\n------------------------`)
-}
+const parser = new ParserGenerator(grammar)
+
+const file = 'test*test'
+parser.showTokenTable(file)
