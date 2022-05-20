@@ -1,19 +1,31 @@
 
 
-import { ParserGenerator } from "./Parser"
+import { ParserGenerator } from "./ParserGenerator"
 
 const definitions = [
   {
-    name: 'id',
+    name: 'p',
     regex: /[a-zA-Z]+/
   },
   {
-    name: 'PLUS',
-    regex: /\+/
+    name: 'AND',
+    regex: /\&/
   },
   {
-    name: 'MULT',
-    regex: /\*/
+    name: 'XOR',
+    regex: /\^/
+  },
+  {
+    name: 'MINUS',
+    regex: /\-/
+  },
+  {
+    name: 'LEFT_PR',
+    regex: /\(/
+  },
+  {
+    name: 'RIGHT_PR',
+    regex: /\)/
   },
   {
     name: '_',
@@ -24,16 +36,20 @@ const definitions = [
 
 const rules = [
   {
-    name : 'E',
-    rules: ['E PLUS T', 'T']
+    name : 'S',
+    rules: ['MINUS B']
   },
   {
-    name: 'T',
-    rules: ['T MULT F', 'F']
+    name : 'B',
+    rules: ['T', 'B AND T']
   },
   {
-    name: 'F',
-    rules: ['id']
+    name : 'T',
+    rules: ['J', 'T XOR J']
+  },
+  {
+    name : 'J',
+    rules: ['p', 'LEFT_PR B RIGHT_PR']
   }
 ]
 
@@ -44,5 +60,4 @@ const grammar = {
 
 const parser = new ParserGenerator(grammar)
 
-const file = 'test*test'
-parser.showTokenTable(file)
+parser.test()
