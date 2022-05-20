@@ -1,4 +1,3 @@
-import { Rule } from "./Rule";
 import { TokenDefinition } from "./TokenDefenition";
 
 /**
@@ -8,5 +7,5 @@ import { TokenDefinition } from "./TokenDefenition";
  */
 export interface Grammar {
   tokens: TokenDefinition[]
-  rules: Rule[]
+  rules: Object
 }

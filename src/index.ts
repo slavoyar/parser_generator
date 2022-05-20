@@ -34,24 +34,13 @@ const definitions = [
   }
 ]
 
-const rules = [
-  {
-    name : 'S',
-    rules: ['MINUS B']
-  },
-  {
-    name : 'B',
-    rules: ['T', 'B AND T']
-  },
-  {
-    name : 'T',
-    rules: ['J', 'T XOR J']
-  },
-  {
-    name : 'J',
-    rules: ['p', 'LEFT_PR B RIGHT_PR']
+const rules = {
+    'S': ['MINUS B'],
+    'B': ['T', 'B AND T'],
+    'T': ['J', 'T XOR J'],
+    'J': ['p', 'LEFT_PR B RIGHT_PR']
   }
-]
+
 
 const grammar = {
   tokens: definitions,
