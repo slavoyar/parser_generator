@@ -15,15 +15,15 @@ export class ParserGenerator {
    * Create instance of a Parser Generator class.
    */
   constructor(private readonly _grammar: Grammar) {
-    if(_grammar == undefined) {
+    if (_grammar == undefined) {
       throw new Error('Grammar is not defined')
     }
 
-    if(_grammar.rules == undefined) {
+    if (_grammar.rules == undefined) {
       throw new Error('Grammar rules are not defined')
     }
 
-    if(_grammar.tokens == undefined) {
+    if (_grammar.tokens == undefined) {
       throw new Error('Tokens are not defined')
     }
 
@@ -44,6 +44,10 @@ export class ParserGenerator {
 
     const leftTerminals = this.getTerminalSymbols(Side.Left)
     const rightTerminals = this.getTerminalSymbols(Side.Right)
+    console.log(leftTerminals, rightTerminals)
+
+    this.completeTerminals(leftTerminals, leftSymbols)
+    this.completeTerminals(rightTerminals, rightSymbols)
     console.log(leftTerminals, rightTerminals)
   }
 
@@ -66,7 +70,7 @@ export class ParserGenerator {
           sideSymbols.add(temp[temp.length - 1])
         }
       }
-      result.set(ruleName , sideSymbols)
+      result.set(ruleName, sideSymbols)
     }
     return result
   }
@@ -107,26 +111,39 @@ export class ParserGenerator {
       const rules = this._ruleDefenition.get(ruleName) as string[]
       for (const rule of rules) {
         if (side === Side.Left) {
-          for(const symbol of rule.split(' ')) {
-            if(!ruleNames.includes(symbol)) {
+          for (const symbol of rule.split(' ')) {
+            if (!ruleNames.includes(symbol)) {
               sideSymbols.add(symbol)
               break
             }
           }
         } else {
-          for(const symbol of rule.split(' ').reverse()) {
-            if(!ruleNames.includes(symbol)) {
+          for (const symbol of rule.split(' ').reverse()) {
+            if (!ruleNames.includes(symbol)) {
               sideSymbols.add(symbol)
               break
             }
           }
         }
       }
-      result.set(ruleName , sideSymbols)
+      result.set(ruleName, sideSymbols)
     }
     return result
   }
 
-  
+  private completeTerminals(terminals: Map<string, Set<string>>, sideSymbols: Map<string, Set<string>>): void {
+    const ruleNames = Array.from(this._ruleDefenition.keys())
+    for (const terminal of terminals) {
+      const ruleName = terminal[0]
+      const symbols = sideSymbols.get(ruleName) as Set<string>
+      for (const symbol of symbols) {
+        if (ruleNames.includes(symbol) && symbol !== ruleName) {
+          terminals.get(symbol)?.forEach(element => {
+            terminal[1].add(element)
+          })
+        }
+      }
+    }
+  }
 
 }
