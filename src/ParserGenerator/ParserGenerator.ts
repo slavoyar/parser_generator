@@ -1,5 +1,4 @@
-import { Grammar } from "../Grammar";
-import { Tokenizer } from "../Tokenizer";
+import { Grammar } from "../Grammar"
 
 /**
  * Side defenition for defining set of symbols for rule.
@@ -81,16 +80,13 @@ export class ParserGenerator {
    * @param sideSymbols Most left or right symbols.
    */
   private completeSideSymbols(sideSymbols: Map<string, Set<string>>): void {
-    for (const key of sideSymbols.keys()) {
-      let ruleSymbols = sideSymbols.get(key)
-      if (ruleSymbols === undefined) {
-        throw new Error('There is no symbols for this rule')
-      }
+    const ruleNames = Array.from(this._ruleDefenition.keys())
+    for (const ruleName of ruleNames) {
+      let ruleSymbols = sideSymbols.get(ruleName) as Set<string>
       for (const symbol of ruleSymbols) {
-        if (Array.from(sideSymbols.keys()).includes(symbol)) {
-          let newSet = new Set([...sideSymbols.get(symbol) as Set<string>, ...sideSymbols.get(key) as Set<string>])
-          newSet.forEach(element => {
-            sideSymbols.get(key)?.add(element)
+        if (ruleNames.includes(symbol)) {
+          sideSymbols.get(symbol)?.forEach( element => {
+            sideSymbols.get(ruleName)?.add(element)
           })
         }
       }
@@ -131,6 +127,12 @@ export class ParserGenerator {
     return result
   }
 
+  /**
+   * Find all left and right terminal symbols for each rule.
+   * 
+   * @param terminals Most left or right terminal symbols.
+   * @param sideSymbols All left and right symbols for each rule.
+   */
   private completeTerminals(terminals: Map<string, Set<string>>, sideSymbols: Map<string, Set<string>>): void {
     const ruleNames = Array.from(this._ruleDefenition.keys())
     for (const terminal of terminals) {
