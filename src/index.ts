@@ -2,44 +2,22 @@
 
 import { ParserGenerator } from "./ParserGenerator"
 
-const definitions = [
-  {
-    name: 'p',
-    regex: /[a-zA-Z]+/
-  },
-  {
-    name: 'AND',
-    regex: /\&/
-  },
-  {
-    name: 'XOR',
-    regex: /\^/
-  },
-  {
-    name: 'MINUS',
-    regex: /\-/
-  },
-  {
-    name: 'LEFT_PR',
-    regex: /\(/
-  },
-  {
-    name: 'RIGHT_PR',
-    regex: /\)/
-  },
-  {
-    name: '_',
-    regex: /\s+|\t+|\n+/,
-    skip: true
-  }
-]
+const definitions = {
+  'p': /[a-zA-Z]+/,
+  'AND': /\&/,
+  'XOR': /\^/,
+  'MINUS': /\-/,
+  'LEFT_PR': /\(/,
+  'RIGHT_PR': /\)/,
+  '_': /\s+|\t+|\n+/
+}
 
 const rules = {
-    'S': ['MINUS B'],
-    'B': ['T', 'B AND T'],
-    'T': ['J', 'T XOR J'],
-    'J': ['p', 'LEFT_PR B RIGHT_PR']
-  }
+  'S': ['MINUS B'],
+  'B': ['T', 'B AND T'],
+  'T': ['J', 'T XOR J'],
+  'J': ['p', 'LEFT_PR B RIGHT_PR']
+}
 
 
 const grammar = {

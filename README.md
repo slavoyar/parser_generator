@@ -20,39 +20,21 @@ The example for grammar:
 <br>F → id 
 ```javascript
 {
-  tokens: [
-    {
-      name: 'id',
-      regex: /[a-zA-Z]+/
-    },
-    {
-      name: 'PLUS',
-      regex: /\+/
-    },
-    {
-      name: 'MULT',
-      regex: /\*/
-    },
-    {
-      name: '_',
-      regex: /\s+|\t+|\n+/,
-      skip: true
-    }
-  ],
-  rules: [
-    {
-      name : 'E',
-      rules: ['E PLUS T', 'T']
-    },
-    {
-      name: 'T',
-      rules: ['T MULT F', 'F']
-    },
-    {
-      name: 'F',
-      rules: ['id']
-    }
-  ]
+  tokens: {
+  'p': /[a-zA-Z]+/,
+  'AND': /\&/,
+  'XOR': /\^/,
+  'MINUS': /\-/,
+  'LEFT_PR': /\(/,
+  'RIGHT_PR': /\)/,
+  '_': /\s+|\t+|\n+/
+},
+  rules : {
+    'S': ['MINUS B'],
+    'B': ['T', 'B AND T'],
+    'T': ['J', 'T XOR J'],
+    'J': ['p', 'LEFT_PR B RIGHT_PR']
+  }
 }
 ```
 Token are defined in json with following properties:

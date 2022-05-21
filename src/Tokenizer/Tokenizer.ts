@@ -1,4 +1,3 @@
-import { TokenDefinition } from "../Grammar/"
 
 /**
  * Class for handling lexical analysis 
@@ -11,7 +10,7 @@ export class Tokenizer {
    * @param tokensDefinitions Defenitions for tokens.
    */
   constructor(
-    private tokensDefinitions: TokenDefinition[]
+    private tokensDefinitions: Object
   ) { }
 
   /**

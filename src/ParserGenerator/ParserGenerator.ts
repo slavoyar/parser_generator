@@ -6,10 +6,23 @@ import { Grammar } from "../Grammar"
 enum Side { Left, Right }
 
 /**
+ * Possible relations in the grammar precedence table.
+ */
+enum Relation {
+  Left,
+  Base,
+  Right,
+  Empty
+}
+
+type GrammarTable = Map<string, Map<string, string>>
+
+/**
  * Class for generating parsing for given rules.
  */
 export class ParserGenerator {
   private _ruleDefenition: Map<string, string[]>
+  private _tokens: string[]
   /**
    * Create instance of a Parser Generator class.
    */
@@ -27,6 +40,7 @@ export class ParserGenerator {
     }
 
     this._ruleDefenition = new Map(Object.entries(_grammar.rules))
+    this._tokens = Object.keys(this._grammar.tokens).filter(item => item !== '_')
   }
 
   /**
@@ -35,7 +49,6 @@ export class ParserGenerator {
   public test(): void {
     const leftSymbols = this.getSideSymbols(Side.Left)
     const rightSymbols = this.getSideSymbols(Side.Right)
-    console.log(leftSymbols, rightSymbols)
 
     this.completeSideSymbols(leftSymbols)
     this.completeSideSymbols(rightSymbols)
@@ -43,11 +56,14 @@ export class ParserGenerator {
 
     const leftTerminals = this.getTerminalSymbols(Side.Left)
     const rightTerminals = this.getTerminalSymbols(Side.Right)
-    console.log(leftTerminals, rightTerminals)
 
     this.completeTerminals(leftTerminals, leftSymbols)
     this.completeTerminals(rightTerminals, rightSymbols)
     console.log(leftTerminals, rightTerminals)
+
+    console.log(this._tokens)
+    const table = this.generateTable(leftTerminals, rightTerminals)
+    console.log(table)
   }
 
   /**
@@ -85,7 +101,7 @@ export class ParserGenerator {
       let ruleSymbols = sideSymbols.get(ruleName) as Set<string>
       for (const symbol of ruleSymbols) {
         if (ruleNames.includes(symbol)) {
-          sideSymbols.get(symbol)?.forEach( element => {
+          sideSymbols.get(symbol)?.forEach(element => {
             sideSymbols.get(ruleName)?.add(element)
           })
         }
@@ -133,7 +149,10 @@ export class ParserGenerator {
    * @param terminals Most left or right terminal symbols.
    * @param sideSymbols All left and right symbols for each rule.
    */
-  private completeTerminals(terminals: Map<string, Set<string>>, sideSymbols: Map<string, Set<string>>): void {
+  private completeTerminals(
+    terminals: Map<string, Set<string>>,
+    sideSymbols: Map<string, Set<string>>
+  ): void {
     const ruleNames = Array.from(this._ruleDefenition.keys())
     for (const terminal of terminals) {
       const ruleName = terminal[0]
@@ -148,4 +167,104 @@ export class ParserGenerator {
     }
   }
 
+  /**
+   * Genarate grammar precedence table.
+   * 
+   * @param leftTerminals Every left terminal symbol for each rule.
+   * @param rightTerminals Every right terminal symbol for each rule.
+   * @returns Table that consists of relations of every terminal symbol.
+   */
+  private generateTable(
+    leftTerminals: Map<string, Set<string>>,
+    rightTerminals: Map<string, Set<string>>
+  ): Relation[][] {
+    let result: Relation[][] = new Array(this._tokens.length)
+      .fill(Relation.Empty)
+      .map(() => new Array(this._tokens.length).fill(Relation.Empty))
+    for (let terminal of this._tokens) {
+      let leftTuple: Set<string> = new Set<string>()
+      let rightTuple: Set<string> = new Set<string>()
+      let baseTuple: Set<string> = new Set<string>()
+      for (let [_, rules] of this._ruleDefenition.entries()) {
+        for (let rule of rules) {
+          const tempArray = rule.split(' ')
+          if (tempArray.includes(terminal)) {
+            const currentIndex = tempArray.indexOf(terminal)
+            if (currentIndex + 1 < tempArray.length) {
+              if (!this._tokens.includes(tempArray[currentIndex + 1])) {
+                leftTuple.add(tempArray[currentIndex + 1])
+              } else {
+                baseTuple.add(tempArray[currentIndex + 1])
+              }
+            }
+            if (currentIndex > 0) {
+              if (!this._tokens.includes(tempArray[currentIndex - 1])) {
+                rightTuple.add(tempArray[currentIndex - 1])
+              }
+            }
+            if (currentIndex + 2 < tempArray.length) {
+              if (this._tokens.includes(tempArray[currentIndex + 2])) {
+                baseTuple.add(tempArray[currentIndex + 2])
+              }
+            }
+          }
+        }
+      }
+      this.fillTableTuple(result, leftTuple, leftTerminals, terminal, Relation.Left)
+      this.fillTableTuple(result, rightTuple, rightTerminals, terminal, Relation.Right)
+
+      for (let element of baseTuple) {
+        const row = this._tokens.indexOf(terminal)
+        const col = this._tokens.indexOf(element)
+        if (result[row][col] !== Relation.Empty) {
+          throw new Error('Can not generate table for this grammar')
+        }
+        result[row][col] = Relation.Base
+      }
+
+    }
+    return result
+  }
+
+  /**
+   * Fill row or column of the table for specidied terminal symbol.
+   * 
+   * @param table Grammar precedence table.
+   * @param tuple Set of nonterminal symbols next to specidied symbol.
+   * @param terminals Table of all terminals for each rule.
+   * @param terminal Specified terminal symbol.
+   * @param relation Specified relation
+   */
+  private fillTableTuple(
+    table: Relation[][],
+    tuple: Set<string>,
+    terminals: Map<string, Set<string>>,
+    terminal: string,
+    relation: Relation
+  ): void {
+    if (tuple.size > 0) {
+      const row = this._tokens.indexOf(terminal)
+      for (let element of tuple) {
+        terminals.get(element)?.forEach(el => {
+          const col = this._tokens.indexOf(el)
+          switch (relation) {
+            case Relation.Left:
+              if (table[row][col] !== Relation.Empty) {
+                throw new Error('Can not generate table for this grammar')
+              }
+              table[row][col] = Relation.Left
+              break
+            case Relation.Right:
+              if (table[col][row] !== Relation.Empty) {
+                throw new Error('Can not generate table for this grammar')
+              }
+              table[col][row] = Relation.Right
+              break
+            default:
+              throw new Error(`${relation} is not valid relation. Should be ${Relation.Left} or ${Relation.Right}}`)
+          }
+        })
+      }
+    }
+  }
 }
