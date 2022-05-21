@@ -15,9 +15,10 @@ We can convert it into an operator grammar, though:
 Those grammar rules, such as tokens should be defined in json format. 
 
 The example for grammar:
-<br>E → E+T/T
-<br>T → T*F/F
-<br>F → id 
+<br>S → -B
+<br>B → T | B&T
+<br>T → J | T^J 
+<br>J → (B) | p
 ```javascript
 {
   tokens: {
@@ -39,13 +40,11 @@ The example for grammar:
 ```
 Token are defined in json with following properties:
 <ul>
-<li>name - Name for the token.</li>
-<li>regex - Regular expression.</li>
-<li>skip - Boolean, eather we add token to the token table or not.</li>
+<li>name : Regular expression.</li>
 </ul>
+If name is '_' then it will be skiped in tokenizer.
 
 Rules are defined in json with following properties:
 <ul>
-<li>name - Name for the rule.</li>
-<li>rules - List of statements where rule can be defined.</li>
+<li>name : List of statements</li>
 </ul>
