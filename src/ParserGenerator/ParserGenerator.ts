@@ -15,7 +15,7 @@ enum Relation {
   Empty
 }
 
-type GrammarTable = Map<string, Map<string, string>>
+type GrammarTable = Map<string, Map<string, Relation>>
 
 /**
  * Class for generating parsing for given rules.
@@ -64,6 +64,8 @@ export class ParserGenerator {
     console.log(this._tokens)
     const table = this.generateTable(leftTerminals, rightTerminals)
     console.log(table)
+    const transformedTable = this.transformTable(table)
+    console.log(transformedTable)
   }
 
   /**
@@ -266,5 +268,23 @@ export class ParserGenerator {
         })
       }
     }
+  }
+
+  /**
+   * Transform table from 2d array to 2d map.
+   * 
+   * @param table Array of relations.
+   * @returns table in GrammarTable type.
+   */
+  private transformTable(table: Relation[][]): GrammarTable {
+    let result: GrammarTable = new Map<string, Map<string, Relation>>()
+    for (let i = 0; i < this._tokens.length; i++) {
+      let row: Map<string, Relation> = new Map<string, Relation>()
+      for (let j = 0; j < this._tokens.length; j++) {
+        row.set(this._tokens[j], table[i][j])
+      }
+      result.set(this._tokens[i], row)
+    }
+    return result
   }
 }

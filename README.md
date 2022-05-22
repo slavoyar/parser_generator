@@ -44,6 +44,7 @@ Token are defined in json with following properties:
 </ul>
 If name is '_' then it will be skiped in tokenizer.
 
+<br>
 Rules are defined in json with following properties:
 <ul>
 <li>name : List of statements</li>
