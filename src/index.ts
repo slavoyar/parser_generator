@@ -1,6 +1,8 @@
 
 
+import { Parser } from "./Parser"
 import { ParserGenerator } from "./ParserGenerator"
+import { Tokenizer } from "./Tokenizer"
 
 const definitions = {
   'p': /[a-zA-Z]+/,
@@ -25,6 +27,6 @@ const grammar = {
   rules: rules
 }
 
-const parser = new ParserGenerator(grammar)
+const file = '-   gay '
 
-parser.test()
+const parser = new Parser(file)
