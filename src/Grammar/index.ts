@@ -1,3 +1,3 @@
-import { Grammar } from "./Grammar"
+import { Grammar, GrammarTable, Relation } from "./Grammar"
 
-export { Grammar }
+export { Grammar, GrammarTable, Relation }

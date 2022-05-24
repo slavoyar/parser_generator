@@ -1,21 +1,10 @@
-import { Grammar } from "../Grammar"
+import { Grammar, GrammarTable, Relation } from "../Grammar"
 
 /**
  * Side defenition for defining set of symbols for rule.
  */
 enum Side { Left, Right }
 
-/**
- * Possible relations in the grammar precedence table.
- */
-enum Relation {
-  Left,
-  Base,
-  Right,
-  Empty
-}
-
-type GrammarTable = Map<string, Map<string, Relation>>
 
 /**
  * Class for generating parsing for given rules.
@@ -65,7 +54,8 @@ export class ParserGenerator {
     const table = this.generateTable(leftTerminals, rightTerminals)
     console.log(table)
     const transformedTable = this.transformTable(table)
-    console.log(transformedTable)
+    
+   console.log(transformedTable)
   }
 
   /**
@@ -276,15 +266,17 @@ export class ParserGenerator {
    * @param table Array of relations.
    * @returns table in GrammarTable type.
    */
-  private transformTable(table: Relation[][]): GrammarTable {
-    let result: GrammarTable = new Map<string, Map<string, Relation>>()
+  private transformTable(table: Relation[][]): string {
+    let result: string = '{'
     for (let i = 0; i < this._tokens.length; i++) {
-      let row: Map<string, Relation> = new Map<string, Relation>()
+      let row: string = '{'
       for (let j = 0; j < this._tokens.length; j++) {
-        row.set(this._tokens[j], table[i][j])
+        row += `"${this._tokens[j]}":${table[i][j]},`
       }
-      result.set(this._tokens[i], row)
+      row = row.slice(0, -1) + '}'
+      result+=`"${this._tokens[i]}":${row},`
     }
+    result = result.slice(0, -1) + '}'
     return result
   }
 }
