@@ -4,6 +4,7 @@
  */
 export class Tokenizer {
   private cursor = 0
+  private _tokens: Map<string, RegExp>
   /**
    * Create an instance of this class.
    * 
@@ -11,41 +12,37 @@ export class Tokenizer {
    */
   constructor(
     private tokensDefinitions: Object
-  ) { }
+  ) {
+    this._tokens = new Map<string, RegExp>(Object.entries(tokensDefinitions))
+  }
 
   /**
    * Going through all input file and find tokens.
    * 
-   * @returns Table of tokens in same order as in file.
+   * @returns Generator with pair of token name and value.
    */
-  // public generateTable(file: string): unknown[] {
-  //   const tokensTable: unknown[] = []
-  //   while (file.length) {
-  //     let token: unknown | undefined
-  //     let ifSkip: boolean | undefined
-  //     for (const definition of this.tokensDefinitions) {
-  //       if (definition.regex == null) {
-  //         throw new Error(`This is not valid definition for '${definition.name}' token`)
-  //       }
-  //       let tokenValue: string = ''
-  //       const template = new RegExp(definition.regex)
-  //       const result = file.match(template)
-  //       if (result?.index == 0) {
-  //         file = file.slice(result[0].length)
-  //         this.cursor += result[0].length
-  //         tokenValue = result[0]
-  //       }
-  //       if (tokenValue != '') {
-  //         token = { name: definition.name, value: tokenValue }
-  //         ifSkip = definition.skip
-  //         break
-  //       }
-  //     }
-  //     if (token === undefined) {
-  //       throw new Error(`There is no definition for token at ${this.cursor}`)
-  //     }
-  //     if (!ifSkip) tokensTable.push(token)
-  //   }
-  //   return tokensTable
-  // }
+  public *getNextToken(file: string): Generator<[string, string]> {
+    this.cursor = 0
+    while (file.length) {
+      let tokenValue: string = ''
+      for (const [name, regexp] of this._tokens) {
+        const template = new RegExp(regexp)
+        const result = file.match(template)
+        if (result?.index == 0) {
+          file = file.slice(result[0].length)
+          this.cursor += result[0].length
+          tokenValue = result[0]
+        }
+        if (tokenValue !== '') {
+          if (name === '_') break
+          yield [name, tokenValue]
+          break
+        }
+      }
+      if ( tokenValue === '') {
+        throw new Error(`There is no token defenition in ${this.cursor} position.`)
+      }
+    }
+
+  }
 }
