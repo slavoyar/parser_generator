@@ -6,5 +6,8 @@
         "clean": "rm -rf ./dist build",
         "start": "node ./dist/index.js",
         "ts-node": "ts-node"
+    },
+    "dependencies": {
+        "typescript": "^4.7.2"
     }
 }
