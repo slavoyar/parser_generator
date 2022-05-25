@@ -27,6 +27,7 @@ const grammar = {
   rules: rules
 }
 
-const file = '-   gay '
+const file = '-p&p^(p)'
 
-const parser = new Parser(file)
+const parser = new Parser()
+console.log(parser.checkChain(file))

@@ -21,7 +21,7 @@ export class Tokenizer {
    * 
    * @returns Generator with pair of token name and value.
    */
-  public *getNextToken(file: string): Generator<[string, string]> {
+  public *tokenGenerator(file: string): Generator<[string, string]> {
     this.cursor = 0
     while (file.length) {
       let tokenValue: string = ''

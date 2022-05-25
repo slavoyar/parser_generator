@@ -1,11 +1,14 @@
 import { GrammarTable, Relation } from "../Grammar";
 import { Tokenizer } from "../Tokenizer";
 
+
 /**
  * Class for parsing input file.
  */
 export class Parser {
   private _tokenizer: Tokenizer
+  private _stack: string[] = []
+  private _tokenNames: string[]
   private _namelessRules: string[][]
   private _precedenceTable: GrammarTable
   private _grammarTokens: Object = {
@@ -38,11 +41,23 @@ export class Parser {
    * 
    * @param file File that will be analysed.
    */
-  constructor(private file: string) {
+  constructor() {
     this._tokenizer = new Tokenizer(this._grammarTokens)
     this._precedenceTable = this.objToTable()
     this._namelessRules = this.generateNamelessRules()
+    this._tokenNames = Array.from(Object.keys(this._grammarTokens))
     console.log(this._namelessRules)
+  }
+
+  public checkChain(file: string): number[] {
+    let result: number[] = []
+    const token = this._tokenizer.tokenGenerator(file)
+    let currentTerminal = token.next()
+    let nextTerminal = token.next()
+    if (currentTerminal === undefined || nextTerminal === undefined) {
+      throw new Error('There is no terminal symbols.')
+    }
+    return result
   }
 
   /**
@@ -82,4 +97,41 @@ export class Parser {
     return result
   }
 
+  /**
+   * Pack values that are in the stack.
+   * 
+   * @returns Rule number from array of nameless rules.
+   */
+  private pack(): number | undefined {
+    let result: number | undefined
+    const stackSize = this._stack.length
+    for (const rule of this._namelessRules) {
+      if (stackSize < rule.length) continue
+      let flag = true
+      for (let i = 0; i < rule.length; i++) {
+        if (this._stack[stackSize - 1 - i] !== rule[rule.length - 1 - i]) {
+          flag = false
+          break
+        }
+      }
+      if (flag) {
+        result = this._namelessRules.indexOf(rule)
+        this._stack = this._stack.slice(0, stackSize - rule.length)
+        this._stack.push('E')
+        break
+      }
+    }
+    return result
+  }
+
+  private getCurrentTerminal(): string | undefined {
+    let result: string | undefined
+    for (let i = this._stack.length - 1; i >= 0; i--) {
+      if (this._tokenNames.includes(this._stack[i])) {
+        result = this._stack[i]
+        break
+      }
+    }
+    return result
+  }
 }
