@@ -2,6 +2,11 @@ import { GrammarTable, Relation } from "../Grammar";
 import { Tokenizer } from "../Tokenizer";
 
 
+enum Command {
+  Transfer,
+  Bundle
+}
+
 /**
  * Class for parsing input file.
  */
@@ -52,11 +57,51 @@ export class Parser {
   public checkChain(file: string): number[] {
     let result: number[] = []
     const token = this._tokenizer.tokenGenerator(file)
-    let currentTerminal = token.next()
-    let nextTerminal = token.next()
-    if (currentTerminal === undefined || nextTerminal === undefined) {
-      throw new Error('There is no terminal symbols.')
+    this._stack.push(token.next().value[0])
+    let currentTerminal = this.getCurrentTerminal() as string
+    let nextTerminal = token.next().value[0]
+    let command = Command.Transfer
+    while (true) {
+      if (nextTerminal !== undefined) {
+        switch (this._precedenceTable.get(currentTerminal)?.get(nextTerminal)) {
+          case Relation.Left:
+            command = Command.Transfer
+            break
+          case Relation.Base:
+            command = Command.Transfer
+            break
+          case Relation.Right:
+            command = Command.Bundle
+            break
+          default:
+            throw new Error(`There are no rules for this pait of tokens: [${currentTerminal}, ${nextTerminal}]`)
+        }
+      } else {
+        command = Command.Bundle
+      }
+
+      switch (command) {
+        case Command.Transfer:
+          this._stack.push(nextTerminal)
+          currentTerminal = nextTerminal
+          const temp = token.next().value
+          nextTerminal = temp === undefined ? undefined : temp[0]
+          break
+        case Command.Bundle:
+          const rule = this.pack()
+          const tmp = this.getCurrentTerminal()
+          if (rule === undefined) {
+            throw new Error(`Can not pack this stack: [${this._stack}]`)
+          }
+          if (tmp !== undefined) {
+            currentTerminal = tmp as string
+          }
+          result.push(rule)
+      }
+      console.log(this._stack)
+      if (this._stack.length === 1 && this._stack[0] === 'E') break
     }
+
     return result
   }
 
@@ -91,7 +136,9 @@ export class Parser {
           symbol = ruleNames.includes(symbol) ? 'E' : symbol
           rule.push(symbol)
         })
-        result.push(rule)
+        if (!(rule.length === 1 && rule[0] === 'E')) {
+          result.push(rule)
+        }
       })
     }
     return result

@@ -27,7 +27,11 @@ const grammar = {
   rules: rules
 }
 
-const file = '-p&p^(p)'
+const file = '-p&p^p'
 
 const parser = new Parser()
-console.log(parser.checkChain(file))
+try {
+  console.log(parser.checkChain(file))
+} catch (error) {
+  console.log(error)
+}
