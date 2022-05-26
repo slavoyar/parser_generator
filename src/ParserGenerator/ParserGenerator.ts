@@ -1,4 +1,6 @@
-import { Grammar, GrammarTable, Relation } from "../Grammar"
+import { Grammar, Relation } from "../Grammar"
+import * as fs from 'fs'
+import path from 'path'
 
 /**
  * Side defenition for defining set of symbols for rule.
@@ -32,31 +34,47 @@ export class ParserGenerator {
     this._tokens = Object.keys(this._grammar.tokens).filter(item => item !== '_')
   }
 
-  /**
-   * Temporary function for debuging purpuse.
-   */
-  public test(): void {
+  public generate() {
     const leftSymbols = this.getSideSymbols(Side.Left)
     const rightSymbols = this.getSideSymbols(Side.Right)
-
     this.completeSideSymbols(leftSymbols)
     this.completeSideSymbols(rightSymbols)
-    console.log(leftSymbols, rightSymbols)
 
     const leftTerminals = this.getTerminalSymbols(Side.Left)
     const rightTerminals = this.getTerminalSymbols(Side.Right)
-
     this.completeTerminals(leftTerminals, leftSymbols)
     this.completeTerminals(rightTerminals, rightSymbols)
-    console.log(leftTerminals, rightTerminals)
+    let table: Relation[][] = []
+    try {
+      table = this.generateTable(leftTerminals, rightTerminals)
+      let file = fs.readFileSync(path.resolve(__dirname, '../../templates/template.txt')).toString()
 
-    console.log(this._tokens)
-    const table = this.generateTable(leftTerminals, rightTerminals)
-    console.log(table)
-    const transformedTable = this.transformTable(table)
-    
-   console.log(transformedTable)
+      const tableSerialized = this.precedenceTableSerialize(table)
+      const tokenSerialized = this.tokenDefenitionsSerialize()
+      const rulesSerialized = JSON.stringify(this._grammar.rules)
+
+      file = file.replace('$[tokens]', tokenSerialized)
+      file = file.replace('$[rules]', rulesSerialized)
+      file = file.replace('$[precedenceTable]', tableSerialized)
+      
+      var dir = 'src/result/';
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFile('src/result/Parser.ts', file, err => {
+        if (err) return console.error(err)
+      })
+      fs.copyFile('src/Tokenizer/Tokenizer.ts', 'src/result/Tokenizer.ts', err => {
+        if (err) return console.error(err)
+      })
+      fs.copyFile('src/Grammar/Grammar.ts', 'src/result/Grammar.ts', err => {
+        if (err) return console.error(err)
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
+
 
   /**
    * Get most left or right symbols for each rule.
@@ -266,7 +284,7 @@ export class ParserGenerator {
    * @param table Array of relations.
    * @returns table in GrammarTable type.
    */
-  private transformTable(table: Relation[][]): string {
+  private precedenceTableSerialize(table: Relation[][]): string {
     let result: string = '{'
     for (let i = 0; i < this._tokens.length; i++) {
       let row: string = '{'
@@ -274,7 +292,17 @@ export class ParserGenerator {
         row += `"${this._tokens[j]}":${table[i][j]},`
       }
       row = row.slice(0, -1) + '}'
-      result+=`"${this._tokens[i]}":${row},`
+      result += `"${this._tokens[i]}":${row},`
+    }
+    result = result.slice(0, -1) + '}'
+    return result
+  }
+
+  private tokenDefenitionsSerialize(): string {
+    let result: string = '{'
+    for (const [key, value] of Object.entries(this._grammar.tokens)) {
+      let row = `${key}: ${value},`
+      result += row
     }
     result = result.slice(0, -1) + '}'
     return result

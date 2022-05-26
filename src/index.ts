@@ -28,10 +28,8 @@ const grammar = {
 }
 
 const file = '-p&p^p'
+const parserGen = new ParserGenerator(grammar)
+parserGen.generate()
 
 const parser = new Parser()
-try {
-  console.log(parser.checkChain(file))
-} catch (error) {
-  console.log(error)
-}
+
