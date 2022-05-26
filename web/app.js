@@ -94,7 +94,7 @@ function validateRules(str){
 
 function parse(definitions, rules){
 
-    const Parser = require("c:/slavoyarMC/parser_generator/parser_generator/dist/ParserGenerator/index");
+    const Parser = require('../dist/ParserGenerator/index');
 
 
     grammar = {
