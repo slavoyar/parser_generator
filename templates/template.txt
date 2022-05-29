@@ -30,7 +30,6 @@ export class Parser {
     this._precedenceTable = this.objToTable()
     this._namelessRules = this.generateNamelessRules()
     this._tokenNames = Array.from(Object.keys(this._grammarTokens))
-    console.log(this._namelessRules)
   }
 
   public checkChain(file: string): number[] {
@@ -77,7 +76,6 @@ export class Parser {
           }
           result.push(rule)
       }
-      console.log(this._stack)
       if (this._stack.length === 1 && this._stack[0] === 'E') break
     }
 

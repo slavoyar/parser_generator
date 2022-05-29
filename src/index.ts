@@ -1,6 +1,7 @@
 
 
-import { Parser } from "./Parser"
+import { GrammarValidator } from "./GrammarValidator"
+import { Parser } from "./result/Parser"
 import { ParserGenerator } from "./ParserGenerator"
 import { Tokenizer } from "./Tokenizer"
 
@@ -22,14 +23,20 @@ const rules = {
 }
 
 
-const grammar = {
-  tokens: definitions,
-  rules: rules
+// const validator = new GrammarValidator()
+// const grammar = validator.loadGrammarFromFile("D:/projects/parser/parser_generator/templates/grammar.json")
+// const generator = new ParserGenerator()
+// generator.generate(grammar)
+
+//-p&p^(p), -p^p(p), -p^p&p
+const file = '-p^p(p)'
+const parser = new Parser()
+
+try {
+  const ruleSet = parser.checkChain(file)  
+  console.log(ruleSet)
+} catch (error) {
+  console.log(error)
 }
 
-const file = '-p&p^p'
-const parserGen = new ParserGenerator(grammar)
-parserGen.generate()
-
-const parser = new Parser()
 

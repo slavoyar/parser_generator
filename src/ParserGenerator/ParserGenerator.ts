@@ -17,24 +17,18 @@ export class ParserGenerator {
   /**
    * Create instance of a Parser Generator class.
    */
-  constructor(private readonly _grammar: Grammar) {
-    if (_grammar == undefined) {
-      throw new Error('Grammar is not defined')
-    }
-
-    if (_grammar.rules == undefined) {
-      throw new Error('Grammar rules are not defined')
-    }
-
-    if (_grammar.tokens == undefined) {
-      throw new Error('Tokens are not defined')
-    }
-
-    this._ruleDefenition = new Map(Object.entries(_grammar.rules))
-    this._tokens = Object.keys(this._grammar.tokens).filter(item => item !== '_')
+  constructor() {
+    this._ruleDefenition = new Map<string, string[]>()
+    this._tokens = []
   }
 
-  public generate() {
+  /**
+   * Generate code for parser with given grammar.
+   */
+  public generate(grammar: Grammar) {
+    this._ruleDefenition = new Map(Object.entries(grammar.rules))
+    this._tokens = Object.keys(grammar.tokens).filter(item => item !== '_')
+
     const leftSymbols = this.getSideSymbols(Side.Left)
     const rightSymbols = this.getSideSymbols(Side.Right)
     this.completeSideSymbols(leftSymbols)
@@ -50,13 +44,13 @@ export class ParserGenerator {
       let file = fs.readFileSync(path.resolve(__dirname, '../../templates/template.txt')).toString()
 
       const tableSerialized = this.precedenceTableSerialize(table)
-      const tokenSerialized = this.tokenDefenitionsSerialize()
-      const rulesSerialized = JSON.stringify(this._grammar.rules)
+      const tokenSerialized = this.tokenDefenitionsSerialize(grammar)
+      const rulesSerialized = JSON.stringify(grammar.rules)
 
       file = file.replace('$[tokens]', tokenSerialized)
       file = file.replace('$[rules]', rulesSerialized)
       file = file.replace('$[precedenceTable]', tableSerialized)
-      
+
       var dir = 'src/result/';
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -298,10 +292,15 @@ export class ParserGenerator {
     return result
   }
 
-  private tokenDefenitionsSerialize(): string {
+  /**
+   * Serialize tokens defenitions object into string.
+   * 
+   * @returns Defenitions of tokens serialized.
+   */
+  private tokenDefenitionsSerialize(grammar: Grammar): string {
     let result: string = '{'
-    for (const [key, value] of Object.entries(this._grammar.tokens)) {
-      let row = `${key}: ${value},`
+    for (const [key, value] of Object.entries(grammar.tokens)) {
+      let row = `"${key}": ${value},`
       result += row
     }
     result = result.slice(0, -1) + '}'

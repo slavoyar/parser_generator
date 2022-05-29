@@ -1,10 +1,15 @@
+export interface TokenDefenitions {
+  [key: string]: string
+}
+
+
 /**
  * Defenition of grammar type. 
  * Consists of tokens defenitons and set of rules.
  * 
  */
 export interface Grammar {
-  tokens: Object
+  tokens: TokenDefenitions
   rules: Object
 }
 
