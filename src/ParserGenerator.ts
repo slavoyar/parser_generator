@@ -1,4 +1,5 @@
-import { Grammar, Relation } from "../Grammar"
+import { Grammar, Relation } from "./Grammar/"
+import { GrammarValidator } from "./GrammarValidator"
 import * as fs from 'fs'
 import path from 'path'
 
@@ -14,6 +15,7 @@ enum Side { Left, Right }
 export class ParserGenerator {
   private _ruleDefenition: Map<string, string[]>
   private _tokens: string[]
+  public validator = new GrammarValidator()
   /**
    * Create instance of a Parser Generator class.
    */
@@ -25,7 +27,7 @@ export class ParserGenerator {
   /**
    * Generate code for parser with given grammar.
    */
-  public generate(grammar: Grammar) {
+  public generate(grammar: Grammar): void {
     this._ruleDefenition = new Map(Object.entries(grammar.rules))
     this._tokens = Object.keys(grammar.tokens).filter(item => item !== '_')
 
@@ -41,7 +43,8 @@ export class ParserGenerator {
     let table: Relation[][] = []
     try {
       table = this.generateTable(leftTerminals, rightTerminals)
-      let file = fs.readFileSync(path.resolve(__dirname, '../../templates/template.txt')).toString()
+
+      let file = fs.readFileSync(path.resolve(__dirname, '../templates/template.txt')).toString()
 
       const tableSerialized = this.precedenceTableSerialize(table)
       const tokenSerialized = this.tokenDefenitionsSerialize(grammar)
@@ -58,7 +61,7 @@ export class ParserGenerator {
       fs.writeFile('src/result/Parser.ts', file, err => {
         if (err) return console.error(err)
       })
-      fs.copyFile('src/Tokenizer/Tokenizer.ts', 'src/result/Tokenizer.ts', err => {
+      fs.copyFile('src/Tokenizer.ts', 'src/result/Tokenizer.ts', err => {
         if (err) return console.error(err)
       })
       fs.copyFile('src/Grammar/Grammar.ts', 'src/result/Grammar.ts', err => {

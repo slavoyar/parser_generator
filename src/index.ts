@@ -1,9 +1,4 @@
-
-
-import { GrammarValidator } from "./GrammarValidator"
-import { Parser } from "./result/Parser"
 import { ParserGenerator } from "./ParserGenerator"
-import { Tokenizer } from "./Tokenizer"
 
 const definitions = {
   'p': /[a-zA-Z]+/,
@@ -22,21 +17,11 @@ const rules = {
   'J': ['p', 'LEFT_PR B RIGHT_PR']
 }
 
-
-// const validator = new GrammarValidator()
-// const grammar = validator.loadGrammarFromFile("D:/projects/parser/parser_generator/templates/grammar.json")
-// const generator = new ParserGenerator()
-// generator.generate(grammar)
-
-//-p&p^(p), -p^p(p), -p^p&p
-const file = '-p^p(p)'
-const parser = new Parser()
-
-try {
-  const ruleSet = parser.checkChain(file)  
-  console.log(ruleSet)
-} catch (error) {
-  console.log(error)
+const grammarObject = {
+  tokens: definitions,
+  rules: rules
 }
 
-
+const generator = new ParserGenerator()
+const grammar = generator.validator.checkGrammar(grammarObject)
+generator.generate(grammar)

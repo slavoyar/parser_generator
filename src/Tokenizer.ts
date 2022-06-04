@@ -10,9 +10,7 @@ export class Tokenizer {
    * 
    * @param tokensDefinitions Defenitions for tokens.
    */
-  constructor(
-    private tokensDefinitions: Object
-  ) {
+  constructor(tokensDefinitions: Object) {
     this._tokens = new Map<string, RegExp>(Object.entries(tokensDefinitions))
   }
 

@@ -2,19 +2,14 @@
     "name": "parser_generator",
     "private": true,
     "version": "0.0.0",
-    "type": "module",
     "scripts": {
         "cli": "ts-node src/cli.ts",
         "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
         "build": "tsc -p tsconfig.json",
-        "clean": "rm -rf ./dist build",
-        "start": "node ./dist/index.js",
-        "ts-node": "ts-node",
-        "dev": "vite",
-        "vitebuild": "vite build",
-        "preview": "vite preview"
+        "generate": "node ./dist/index.js",
+        "parser": "node ./dist/result/index.js"
     },
     "devDependencies": {
         "vite": "^2.9.9"
-      }
+    }
 }

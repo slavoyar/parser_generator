@@ -52,6 +52,12 @@ export class Parser {
     this._tokenNames = Array.from(Object.keys(this._grammarTokens))
   }
 
+  /**
+   * Check if input chain match the grammar.
+   * 
+   * @param file Input chain to check.
+   * @returns Array of rules.
+   */
   public checkChain(file: string): number[] {
     let result: number[] = []
     const token = this._tokenizer.tokenGenerator(file)
@@ -169,6 +175,11 @@ export class Parser {
     return result
   }
 
+  /**
+   * If there any terminal in stack get the last one.
+   * 
+   * @returns Current terminal form the stack.
+   */
   private getCurrentTerminal(): string | undefined {
     let result: string | undefined
     for (let i = this._stack.length - 1; i >= 0; i--) {

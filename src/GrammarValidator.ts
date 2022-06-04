@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import { Grammar } from '../Grammar/Grammar'
+import { Grammar } from './Grammar/'
 
 /**
  * Class for validation input data. Check JSON file for expected format.
@@ -35,14 +35,14 @@ export class GrammarValidator {
    * @param grammar Grammar as object.
    * @returns Sae grammar if its valid.
    */
-  public checkGrammar(grammar: Grammar): Grammar {
+  public checkGrammar(grammar: Object): Grammar {
     if (grammar === undefined) {
       throw new Error('Grammar is not defined.')
     }
     if (!this.isValidGrammar(grammar as Grammar)) {
       throw new Error('Grammar is not valid.')
     }
-    return grammar
+    return grammar as Grammar
   }
 
   /**
