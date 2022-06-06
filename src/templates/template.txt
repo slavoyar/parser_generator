@@ -85,7 +85,8 @@ export class Parser {
       if (this._stack.length === 1 && this._stack[0] === 'E') break
     }
 
-    const temp = new TreeGenerator(result, this._namelessRules, file, this._tokenizer)
+    const temp = new TreeGenerator(result, this._namelessRules)
+    temp.createTree()
     return result
   }
 

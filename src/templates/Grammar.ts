@@ -31,13 +31,12 @@ export type GrammarTable = Map<string, Map<string, Relation>>
  * Class for describing node object.
  */
 export class Node {
+  public nodes: Node[] = []
   /**
    * Cosntruct Node object of binary.
    * Tree has 3 atributes value and left/right child Nodes.
    */
   constructor(
-    public value: string,
-    public left: Node | null,
-    public right: Node | null
+    public value: string | Node[]
   ) { }
 }

@@ -1,4 +1,4 @@
-import { Grammar, Relation } from "./Grammar"
+import { Grammar, Relation } from "./templates/Grammar"
 import { GrammarValidator } from "./GrammarValidator"
 import * as fs from 'fs'
 import path from 'path'
@@ -74,7 +74,10 @@ export class ParserGenerator {
       fs.copyFile('src/templates/Tokenizer.ts', 'src/result/Tokenizer.ts', err => {
         if (err) return console.error(err)
       })
-      fs.copyFile('src/Grammar.ts', 'src/result/Grammar.ts', err => {
+      fs.copyFile('src/templates/TreeGenerator.ts', 'src/result/TreeGenerator.ts', err => {
+        if (err) return console.error(err)
+      })
+      fs.copyFile('src/templates/Grammar.ts', 'src/result/Grammar.ts', err => {
         if (err) return console.error(err)
       })
     } catch (error) {

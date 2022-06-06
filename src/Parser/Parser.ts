@@ -1,4 +1,4 @@
-import { GrammarTable, Relation } from "../Grammar";
+import { GrammarTable, Relation } from "../templates/Grammar";
 import { Tokenizer } from "../templates/Tokenizer";
 
 enum Command {
