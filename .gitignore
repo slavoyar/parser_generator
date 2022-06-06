@@ -3,3 +3,4 @@ node_modules
 *-lock.json
 structure
 result
+grammar[0-9]*.json

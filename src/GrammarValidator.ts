@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-import { Grammar } from './Grammar/'
+import { Grammar } from './Grammar'
 
 /**
  * Class for validation input data. Check JSON file for expected format.

@@ -38,7 +38,7 @@ export class Tokenizer {
         }
       }
       if ( tokenValue === '') {
-        throw new Error(`There is no token defenition in ${this.cursor} position.`)
+        throw new Error(`There is no token defenition in ${this.cursor} position. (${file[0]})`)
       }
     }
 

@@ -1,4 +1,4 @@
-import { Grammar, Relation } from "./Grammar/"
+import { Grammar, Relation } from "./Grammar"
 import { GrammarValidator } from "./GrammarValidator"
 import * as fs from 'fs'
 import path from 'path'
@@ -33,20 +33,30 @@ export class ParserGenerator {
 
     const leftSymbols = this.getSideSymbols(Side.Left)
     const rightSymbols = this.getSideSymbols(Side.Right)
+    console.log('1 step symbols')
+    console.log(leftSymbols, '\n', rightSymbols)
     this.completeSideSymbols(leftSymbols)
     this.completeSideSymbols(rightSymbols)
+    console.log('last step symbols')
+    console.log(leftSymbols, '\n', rightSymbols)
 
     const leftTerminals = this.getTerminalSymbols(Side.Left)
     const rightTerminals = this.getTerminalSymbols(Side.Right)
+    console.log('1 step terminals')
+    console.log(leftTerminals, '\n', rightTerminals)
     this.completeTerminals(leftTerminals, leftSymbols)
     this.completeTerminals(rightTerminals, rightSymbols)
+    console.log('last step terminals')
+    console.log(leftTerminals, '\n', rightTerminals)
     let table: Relation[][] = []
     try {
       table = this.generateTable(leftTerminals, rightTerminals)
+      
 
-      let file = fs.readFileSync(path.resolve(__dirname, '../templates/template.txt')).toString()
+      let file = fs.readFileSync(path.resolve(__dirname, '../src/templates/template.txt')).toString()
 
       const tableSerialized = this.precedenceTableSerialize(table)
+      console.log(tableSerialized)
       const tokenSerialized = this.tokenDefenitionsSerialize(grammar)
       const rulesSerialized = JSON.stringify(grammar.rules)
 
@@ -61,10 +71,10 @@ export class ParserGenerator {
       fs.writeFile('src/result/Parser.ts', file, err => {
         if (err) return console.error(err)
       })
-      fs.copyFile('src/Tokenizer.ts', 'src/result/Tokenizer.ts', err => {
+      fs.copyFile('src/templates/Tokenizer.ts', 'src/result/Tokenizer.ts', err => {
         if (err) return console.error(err)
       })
-      fs.copyFile('src/Grammar/Grammar.ts', 'src/result/Grammar.ts', err => {
+      fs.copyFile('src/Grammar.ts', 'src/result/Grammar.ts', err => {
         if (err) return console.error(err)
       })
     } catch (error) {

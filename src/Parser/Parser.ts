@@ -1,5 +1,5 @@
 import { GrammarTable, Relation } from "../Grammar";
-import { Tokenizer } from "../Tokenizer";
+import { Tokenizer } from "../templates/Tokenizer";
 
 enum Command {
   Transfer,
@@ -102,7 +102,6 @@ export class Parser {
           }
           result.push(rule)
       }
-      console.log(this._stack)
       if (this._stack.length === 1 && this._stack[0] === 'E') break
     }
 
