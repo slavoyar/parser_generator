@@ -27,16 +27,22 @@ export enum Relation {
  */
 export type GrammarTable = Map<string, Map<string, Relation>>
 
+
+export enum NodeValue {
+  Value,
+  Node
+}
 /**
  * Class for describing node object.
  */
 export class Node {
-  public nodes: Node[] = []
   /**
    * Cosntruct Node object of binary.
    * Tree has 3 atributes value and left/right child Nodes.
    */
   constructor(
-    public value: string | Node[]
+    public value: string,
+    public type: NodeValue,
+    public nodes: Node[] = []
   ) { }
 }

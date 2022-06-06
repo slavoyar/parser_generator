@@ -7,7 +7,8 @@
         "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
         "build": "tsc -p tsconfig.json",
         "generate": "node ./dist/index.js",
-        "parser": "node ./dist/result/index.js"
+        "parser": "node ./dist/result/index.js",
+        "start": "npm run build && npm run generate && npm run build && npm run parser"
     },
     "devDependencies": {
         "vite": "^2.9.9"
