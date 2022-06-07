@@ -1,4 +1,4 @@
-import { GrammarTable, Relation } from "./Grammar"
+import { Node, GrammarTable, Relation } from "./Grammar"
 import { Tokenizer } from "./Tokenizer"
 import { TreeGenerator } from "./TreeGenerator"
 
@@ -63,7 +63,6 @@ export class Parser {
       } else {
         command = Command.Bundle
       }
-
       switch (command) {
         case Command.Transfer:
           this._stack.push(nextTerminal)
@@ -84,9 +83,19 @@ export class Parser {
       }
       if (this._stack.length === 1 && this._stack[0] === 'E') break
     }
+    return result
+  }
 
-    const temp = new TreeGenerator(result, this._namelessRules)
-    temp.createTree()
+  /**
+   * Generates syntax tree from given rules.
+   * 
+   * @param file File to check.
+   * @returns Root node of syntax tree.
+   */
+  public generateTree(file: string): Node {
+    const rules = this.checkChain(file)
+    const treeGenerator = new TreeGenerator(this._namelessRules)
+    const result = treeGenerator.createTree(rules)
     return result
   }
 

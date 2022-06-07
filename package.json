@@ -1,7 +1,6 @@
 {
     "name": "parser_generator",
     "private": true,
-    "version": "0.0.0",
     "scripts": {
         "cli": "ts-node src/cli.ts",
         "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
@@ -9,8 +8,5 @@
         "generate": "node ./dist/index.js",
         "parser": "node ./dist/result/index.js",
         "start": "npm run build && npm run generate && npm run build && npm run parser"
-    },
-    "devDependencies": {
-        "vite": "^2.9.9"
     }
 }

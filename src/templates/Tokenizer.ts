@@ -32,12 +32,13 @@ export class Tokenizer {
           tokenValue = result[0]
         }
         if (tokenValue !== '') {
-          if (name === '_') break
-          yield [name, tokenValue]
+          if (name !== '_') {
+            yield [name, tokenValue]
+          }
           break
         }
       }
-      if ( tokenValue === '') {
+      if (tokenValue === '') {
         throw new Error(`There is no token defenition in ${this.cursor} position. (${file[0]})`)
       }
     }

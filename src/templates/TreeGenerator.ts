@@ -6,12 +6,12 @@ export class TreeGenerator {
    * Construct instance of treeGenerator class.
    */
   constructor(
-    private _rules: number[],
     private _ruleDefenitions: string[][]
   ) { }
 
-  public createTree(): Node {
-    let currentRule = this._rules.pop()
+  public createTree(rules: number[]): Node {
+    this._parentNode = new Node('', NodeValue.Node)
+    let currentRule = rules.pop()
     let currentNode: Node | undefined = this._parentNode
     while (currentRule !== undefined) {
       for (const element of this._ruleDefenitions[currentRule]) {
@@ -28,10 +28,8 @@ export class TreeGenerator {
       }
       currentNode = this.findMostRightNode()
       if (currentNode === undefined) break
-      currentRule = this._rules.pop()
-      console.log(this._parentNode)
+      currentRule = rules.pop()
     }
-    console.log(this._parentNode)
     return this._parentNode
   }
 

@@ -43,7 +43,6 @@ export class ParserGenerator {
     let table: Relation[][] = []
     try {
       table = this.generateTable(leftTerminals, rightTerminals)
-      
 
       let file = fs.readFileSync(path.resolve(__dirname, '../src/templates/template.txt')).toString()
 
@@ -232,7 +231,6 @@ export class ParserGenerator {
         }
         result[row][col] = Relation.Base
       }
-
     }
     return result
   }

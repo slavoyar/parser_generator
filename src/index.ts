@@ -27,5 +27,5 @@ const grammarObject = {
 
 const generator = new ParserGenerator()
 const grammar = generator.validator.checkGrammar(grammarObject)
-//const grammar = generator.validator.loadGrammarFromFile(path.resolve(__dirname, '../src/templates/grammar2.json'))
+//const grammar = generator.validator.loadGrammarFromFile(path.resolve(__dirname, '../src/templates/grammar1.json'))
 generator.generate(grammar)
